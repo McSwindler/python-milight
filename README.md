@@ -1,4 +1,4 @@
-# MiLight Controller
+# MiLight Controller [![Build Status](https://travis-ci.org/McSwindler/python-milight.svg?branch=master)](https://travis-ci.org/McSwindler/python-milight)
 This is a controller for the following brands of light bulbs:
 * MiLight
 * LimitlessLED
