@@ -10,7 +10,7 @@ class MiLight:
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._address = address
         self._port = port
-        self._wait = min(wait_duration, 0.1)
+        self._wait = max(wait_duration, 0)
         
     def send(self, commands):
         if not hasattr(commands, '__iter__'):
