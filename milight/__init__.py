@@ -49,6 +49,8 @@ class MiLight:
         self._threads = {}
     
     def __del__(self):
+        for t in self._threads:
+            t.join()
         self._sock.close()
         
     def _standardize_hosts(self, hosts):
@@ -107,7 +109,7 @@ class EffectThread(threading.Thread):
         super(EffectThread, self).__init__()
 
 class LightBulb:
-    def __init__(self, types=('rgbw', 'white')):
+    def __init__(self, types=('rgbw', 'white', 'rgb')):
         if type(types) is str:
             types = (types, )
         self._types = []
@@ -149,6 +151,8 @@ class LightBulb:
         return self.off(0)
     def white(self, group=0):
         return self._concat_command('WHITE', idx=group)
+    def night(self, group=0):
+        return self._concat_command('NIGHT', idx=group)
     def color(self, hue=0, group=0):
         if hue < 0:
             return self.off(group)

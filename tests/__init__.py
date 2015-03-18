@@ -1,5 +1,5 @@
 import unittest, time
-import milight.rgbw, milight.white
+import milight
 
 class TestRgbwLights(unittest.TestCase):
     def setUp(self):
@@ -21,12 +21,16 @@ class TestRgbwLights(unittest.TestCase):
 
     def test_bulb_concatenation(self):
         led = milight.MiLight({'host': '127.0.0.1'})
-        bulb = milight.LightBulb(['rgbw', 'white'])
+        bulb = milight.LightBulb()
         commands = bulb.all_on()
-        self.assertTupleEqual(commands, (milight.rgbw.COMMANDS['ON'][0], milight.white.COMMANDS['ON'][0]))
+        self.assertTupleEqual(commands, (milight.rgbw.COMMANDS['ON'][0], 
+                                         milight.white.COMMANDS['ON'][0],
+                                         milight.rgb.COMMANDS['ON'][0]))
         led.send(commands)
         commands = bulb.all_off()
-        self.assertTupleEqual(commands, (milight.rgbw.COMMANDS['OFF'][0], milight.white.COMMANDS['OFF'][0]))
+        self.assertTupleEqual(commands, (milight.rgbw.COMMANDS['OFF'][0], 
+                                         milight.white.COMMANDS['OFF'][0],
+                                         milight.rgb.COMMANDS['OFF'][0]))
         led.send(commands)
 
     def test_on(self):
@@ -57,6 +61,90 @@ class TestRgbwLights(unittest.TestCase):
         self.led.send(self.bulb.brightness(50))
         self.led.send(self.bulb.brightness(50, 1))
 
+    def test_party_mode(self):
+        self.led.send(self.bulb.party('random'))
+
+    def test_disco_faster(self):
+        self.led.send(self.bulb.faster())
+
+    def test_disco_slower(self):
+        self.led.send(self.bulb.slower(1))
+        
+    def test_fade(self):
+        self.led.send(self.bulb.fade_up())
+        self.led.send(self.bulb.fade_down())
+        
+    def test_repetitions(self):
+        commands = self.bulb.fade_up() + self.bulb.fade_down()
+        key = self.led.repeat(commands)
+        time.sleep(10)
+        self.led.cancel(key)
+        
+    def test_wait(self):
+        self.led.send(self.bulb.wait(1))
+        
+    def test_not_supported(self):
+        self.assertEqual(self.bulb.warmness(50, 1), ())
+        
+class TestWhiteLights(unittest.TestCase):
+    def setUp(self):
+        self.led = milight.MiLight("127.0.0.1", wait_duration=0)
+        self.bulb = milight.LightBulb('white')
+
+    def test_on(self):
+        self.led.send(self.bulb.on(0))
+        self.led.send(self.bulb.on(1))
+
+    def test_off(self):
+        self.led.send(self.bulb.off(0))
+        self.led.send(self.bulb.off(1))
+
+    def test_white(self):
+        white = self.bulb.white(1)
+        color = self.bulb.color(milight.color_from_hls(0.66,1,0.5), 1)
+        self.assertEqual(white, color)
+        self.led.send(white)
+        
+    def test_night(self):
+        self.led.send(self.bulb.night(1))
+
+    def test_set_brightness(self):
+        self.led.send(self.bulb.brightness(50))
+        self.led.send(self.bulb.brightness(50, 1))
+        
+    def test_fade(self):
+        self.led.send(self.bulb.fade_up())
+        self.led.send(self.bulb.fade_down())
+        
+    def test_repetitions(self):
+        commands = self.bulb.fade_up() + self.bulb.fade_down()
+        key = self.led.repeat(commands)
+        time.sleep(10)
+        self.led.cancel(key)
+        
+    def test_wait(self):
+        self.led.send(self.bulb.wait(1))
+        
+    def test_not_supported(self):
+        self.assertEqual(self.bulb.color(50, 1), ())
+        
+class TestRgbLights(unittest.TestCase):
+    def setUp(self):
+        self.led = milight.MiLight("127.0.0.1", wait_duration=0)
+        self.bulb = milight.LightBulb('rgb')
+
+    def test_on(self):
+        self.led.send(self.bulb.all_on())
+
+    def test_off(self):
+        self.led.send(self.bulb.all_off())
+
+    def test_color(self):
+        self.led.send(self.bulb.color(milight.color_from_hls(0.66,0.5,0.5)))
+
+    def test_set_brightness(self):
+        self.led.send(self.bulb.brightness(50))
+        
     def test_party_mode(self):
         self.led.send(self.bulb.party('random'))
 

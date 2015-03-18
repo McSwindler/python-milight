@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='milight',
-    version='0.1',
+    version='0.5',
     description='Controller for milight/limitlessled Wi-Fi LEDs',
     long_description=long_description,
     url='https://github.com/McSwindler/python-milight',
@@ -18,7 +18,7 @@ setup(
     license='MIT',
 
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Topic :: Home Automation',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
