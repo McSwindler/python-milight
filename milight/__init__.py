@@ -39,7 +39,12 @@ def color_from_hex(value):
         and converts it to a proper hue value """
     if "#" in value:
         value = value[1:]
-    return color_from_rgb(*struct.unpack('BBB',binascii.unhexlify(value)))
+    
+    try:
+        unhexed = bytes.fromhex(value)
+    except:
+        unhexed = binascii.unhexlify(value) # Fallback for 2.7 compatibility
+    return color_from_rgb(*struct.unpack('BBB',unhexed))
 
 class MiLight:
     def __init__(self, hosts={'host': '127.0.0.1', 'port': 8899}, wait_duration=0.025):
@@ -50,7 +55,7 @@ class MiLight:
     
     def __del__(self):
         for t in self._threads:
-            t.join()
+            self.cancel(t)
         self._sock.close()
         
     def _standardize_hosts(self, hosts):
