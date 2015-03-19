@@ -15,6 +15,16 @@ def color_from_hls(hue, light, sat):
         hsl = colorsys.rgb_to_hls(rgb[2], rgb[1], rgb[0])
         c = int(floor(hsl[0] * 255))
         return c
+    
+def test_from_hls(hue, light, sat):
+    if light > 0.95: #too bright, let's just switch to white
+        return 256
+    elif light < 0.05: #too dark, let's shut it off
+        return -1
+    else:
+        hue = -hue + 1.66
+        hue = hue % 1
+        return int(floor(hue * 255))
 
 def color_from_rgb(red, green, blue):
     """ Takes your standard rgb color 
