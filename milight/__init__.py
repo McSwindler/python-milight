@@ -9,7 +9,7 @@ def color_from_hls(hue, light, sat):
     if light > 0.95: #too bright, let's just switch to white
         return 256
     elif light < 0.05: #too dark, let's shut it off
-        return None
+        return -1
     else: 
         rgb = colorsys.hls_to_rgb(hue, light, sat) #Change the order, best way I could think how
         hsl = colorsys.rgb_to_hls(rgb[2], rgb[1], rgb[0])
