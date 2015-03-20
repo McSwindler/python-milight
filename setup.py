@@ -4,7 +4,7 @@ from codecs import open
 
 setup(
     name='milight',
-    version='0.5.2',
+    version='0.6',
     description='Controller for milight/limitlessled Wi-Fi LEDs',
     long_description='Visit GitHub for more information: https://github.com/McSwindler/python-milight',
     url='https://github.com/McSwindler/python-milight',

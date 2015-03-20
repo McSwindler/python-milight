@@ -1,48 +1,33 @@
-import socket, time, colorsys, struct, threading, binascii
+import socket, time, struct, threading, binascii
 from uuid import uuid4
 from math import floor
+from colorsys import rgb_to_hls
 from importlib import import_module
 
 def color_from_hls(hue, light, sat):
     """ Takes a hls color and converts to proper hue 
-        Bulbs use a BGR hue space instead of RGB """
-    if light > 0.95: #too bright, let's just switch to white
-        return 256
-    elif light < 0.05: #too dark, let's shut it off
-        return -1
-    else: 
-        rgb = colorsys.hls_to_rgb(hue, light, sat) #Change the order, best way I could think how
-        hsl = colorsys.rgb_to_hls(rgb[2], rgb[1], rgb[0])
-        c = int(floor(hsl[0] * 255))
-        return c
-    
-def test_from_hls(hue, light, sat):
+        Bulbs use a BGR order instead of RGB """
     if light > 0.95: #too bright, let's just switch to white
         return 256
     elif light < 0.05: #too dark, let's shut it off
         return -1
     else:
-        hue = -hue + 1.66
-        hue = hue % 1
-        return int(floor(hue * 255))
+        hue = (-hue + 1 + 2.0/3.0) % 1 # invert and translate by 2/3
+        return int(floor(hue * 256))
 
 def color_from_rgb(red, green, blue):
     """ Takes your standard rgb color 
         and converts it to a proper hue value """
     
     r = min(red, 255)
-    if r != 0 and floor(r) != 0: #tests for 0-1 values vs 0-255
-        r = r / 255.0
-    
     g = min(green, 255)
-    if g != 0 and floor(g) != 0:
-        g = g / 255.0
-        
     b = min(blue, 255)
-    if b != 0 and floor(b) != 0:
+    if r > 1 or g > 1 or b > 1:
+        r = r / 255.0
+        g = g / 255.0
         b = b / 255.0
-        
-    return color_from_hls(*colorsys.rgb_to_hls(r,g,b))
+
+    return color_from_hls(*rgb_to_hls(r,g,b))
 
 def color_from_hex(value):
     """ Takes an HTML hex code
